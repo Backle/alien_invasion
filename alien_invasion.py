@@ -35,28 +35,30 @@ class AlienInvasion:
 		self._create_star_sky()
 
 		#make the the Play button
-		self.play_button = Button(self, "Play")
+		self.play_button = Button(self)
+		self.play_button._prep_msg("Play")
 
 		# get the screen dimensions to be used to place buttons
 		self.screen_rect = self.screen.get_rect()
 
 		#make the easy button
-		self.easy_button = Button(self, "Easy")
-		self.easy_button.button_color = (255, 0, 0) #blue
+		self.easy_button = Button(self)
+		self.easy_button.button_color = (0, 0, 255) #blue
 		self.easy_button.rect.centerx = (self.screen_rect.centerx - self.easy_button.width - 50)
+		self.easy_button._prep_msg("Easy")
 
 
 		#make the normal button
-		self.normal_button = Button(self, "Normal")
+		self.normal_button = Button(self)
 		self.normal_button.button_color = (0, 255, 0)  #green
 		self.normal_button.rect.center = self.screen_rect.center
-
+		self.normal_button._prep_msg("Normal")
 
 		#make the hard button
-		self.hard_button = Button(self, "Hard")
+		self.hard_button = Button(self)
 		self.hard_button.button_color = (255, 0, 0)  #red
 		self.hard_button.rect.centerx = (self.screen_rect.centerx + self.hard_button.width + 50)
-
+		self.hard_button._prep_msg("Hard")
 		
 	def run_game(self):
 		"""Start the main loop for the game."""
@@ -292,6 +294,9 @@ class AlienInvasion:
 		if not self.stats.game_active:
 				self.play_button.draw_button()
 				self.easy_button.draw_button()
+				self.hard_button.draw_button()
+				self.normal_button.draw_button()
+
 		
 		pygame.display.flip()
 
