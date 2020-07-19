@@ -24,12 +24,19 @@ class Settings:
 		#Batch direction of 1 represents right; -1 represents left.
 		self.batch_direction = 1
 
+	def initialize_normal_settings(self):
+		"""Initialize settings if normal level is chosen"""
+		self.ship_speed = 5
+		self.bullet_speed = 5
+		self.bun_speed = 6
+
+		# batch_direction of 1 represents rigth; -1 represents left
+		self.batch_direction = 1
+
 		# How quickly the game speeds up
-		self.speedup_scale = 1.25
+		self.speedup_scale = 1.5
 
-		self.initialize_dynamic_settings()
-
-	def initialize_dynamic_settings(self):
+	def initialize_easy_settings(self):
 		"""Initialize settings that can change througout the game"""
 		self.ship_speed = 5
 		self.bullet_speed = 5
@@ -37,6 +44,21 @@ class Settings:
 
 		# batch_direction of 1 represents rigth; -1 represents left
 		self.batch_direction = 1
+
+		# How quickly the game speeds up
+		self.speedup_scale = 1.25
+
+	def initialize_hard_settings(self):
+		"""Initialize settings that can change througout the game"""
+		self.ship_speed = 5
+		self.bullet_speed = 5
+		self.bun_speed = 10
+
+		# How quickly the game speeds up
+		self.speedup_scale = 1.75
+
+		# batch_direction of 1 represents rigth; -1 represents left
+		self.batch_direction = 1		
 
 	def increase_speed(self):
 		"""Increase speed settings"""
