@@ -10,6 +10,7 @@ from bun import Bun
 from star import Star
 from game_stats import GameStats
 from button import Button
+from scoreboard import Scoreboard
 
 
 class AlienInvasion:
@@ -23,8 +24,9 @@ class AlienInvasion:
 		self.settings.screen_height = self.screen.get_rect().height
 		pygame.display.set_caption("Alien Invasion")
 
-		#create and instance to store game stats
+		#create and instance to store game stats and create scoreboard
 		self.stats = GameStats(self)
+		self.sb = Scoreboard(self)
 
 		self.ship = Ship(self)
 		self.bullets = pygame.sprite.Group()
@@ -149,14 +151,23 @@ class AlienInvasion:
 			#reset the game settings
 			self.settings.initialize_normal_settings()
 			self._start_game()
+			self.sb.prep_score()
+			self.sb.prep_level()
+			self.sb.prep_ships()
 
 		elif hard_button_clicked and not self.stats.game_active:
 			self.settings.initialize_hard_settings()
-			self._start_game()	
+			self._start_game()
+			self.sb.prep_score()
+			self.sb.prep_level()
+			self.sb.prep_ships()
 
 		elif easy_button_clicked and not self.stats.game_active:
 			self.settings.initialize_easy_settings()
-			self._start_game()	
+			self._start_game()
+			self.sb.prep_score()
+			self.sb.prep_level()
+			self.sb.prep_ships()	
 	
 	def _fire_bullet(self):
 		""" Create a new bullet and add it to the bullets group"""
@@ -178,6 +189,14 @@ class AlienInvasion:
 	def _check_bullet_bun_collision(self):
 		""" Respond to bullet bun collions"""
 		collisions = pygame.sprite.groupcollide(self.bullets, self.buns, True, True)
+		
+		#increment the score if a bun is shot
+		if collisions:
+			for buns in collisions.values():
+				self.stats.score +=self.settings.bun_points * len(buns)
+			self.sb.prep_score()
+			self.sb.check_high_score()
+
 		# Check for any bullets that have hit buns.
         # If so, get rid of the bullet and the bun.
 		if not self.buns:
@@ -186,13 +205,18 @@ class AlienInvasion:
 			self._create_batch()
 			self.settings.increase_speed()
 
+			#Increase level
+			self.stats.level += 1
+			self.sb.prep_level()
+
 	def _ship_hit(self):
 		"""Respond to the ship being hit by a bun"""
 
 		if self.stats.ships_left > 0:
 
-			#Decrement ships left
+			#Decrement ships left, and update scoreboard
 			self.stats.ships_left -=1
+			self.sb.prep_ships()
 
 			#get rid of any remaining buns and bullets
 			self.buns.empty()
@@ -308,6 +332,9 @@ class AlienInvasion:
 		for bullet in self.bullets.sprites():
 			bullet.draw_bullet()
 		self.buns.draw(self.screen)
+
+		#Draw the score information
+		self.sb.show_score()
 
 		#Draw the play button if the game is inactive.
 		if not self.stats.game_active:

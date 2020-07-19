@@ -24,6 +24,9 @@ class Settings:
 		#Batch direction of 1 represents right; -1 represents left.
 		self.batch_direction = 1
 
+		# How quickly the bun point value increases
+		self.score_scale = 1.5
+
 	def initialize_normal_settings(self):
 		"""Initialize settings if normal level is chosen"""
 		self.ship_speed = 5
@@ -35,6 +38,9 @@ class Settings:
 
 		# How quickly the game speeds up
 		self.speedup_scale = 1.5
+
+		# Scoring
+		self.bun_points = 50
 
 	def initialize_easy_settings(self):
 		"""Initialize settings that can change througout the game"""
@@ -48,6 +54,9 @@ class Settings:
 		# How quickly the game speeds up
 		self.speedup_scale = 1.25
 
+		# Scoring
+		self.bun_points = 40
+
 	def initialize_hard_settings(self):
 		"""Initialize settings that can change througout the game"""
 		self.ship_speed = 5
@@ -60,9 +69,14 @@ class Settings:
 		# batch_direction of 1 represents rigth; -1 represents left
 		self.batch_direction = 1		
 
+		# Scoring
+		self.bun_points = 60
+
 	def increase_speed(self):
 		"""Increase speed settings"""
 		self.ship_speed *= self.speedup_scale
 		self.bullet_speed *= self.speedup_scale
 		self.bun_speed *= self.speedup_scale
+		self.bun_points = int(self.bun_points * self.score_scale)
+		
 
