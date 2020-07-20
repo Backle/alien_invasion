@@ -23,6 +23,8 @@ class Scoreboard:
 		self.prep_level()
 		self.prep_ships()
 
+		
+
 	def prep_score(self):
 		"""turn the score into a rendered image"""
 		rounded_score = round(self.stats.score, -1)
@@ -77,4 +79,18 @@ class Scoreboard:
 			ship.rect.x = 10 + ship_number *ship.rect.width
 			ship.rect.y = 10
 			self.ships.add(ship)
+
+	def save_high_score(self):
+		filename = "high_score.txt"
+		with open(filename) as file_object:
+			saved_high_str = file_object.read()
+			saved_high = int(saved_high_str)
+			print (f"saved_high_str: {saved_high_str}")
+			print (f"saved_high: {saved_high}")
+			print (f"current high_score: {self.stats.high_score}")
+			if self.stats.high_score > saved_high:
+				with open(filename, 'w') as file_object:
+					file_object.write(str(self.stats.high_score))
+
+
 
