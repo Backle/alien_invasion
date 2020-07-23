@@ -168,7 +168,7 @@ class AlienInvasion:
 		self.sb.prep_level()
 		self.sb.prep_ships()
 
-	
+
 	def _fire_bullet(self):
 		""" Create a new bullet and add it to the bullets group"""
 		if len(self.bullets)< self.settings.bullets_allowed:
@@ -188,26 +188,30 @@ class AlienInvasion:
 
 	def _check_bullet_bun_collision(self):
 		""" Respond to bullet bun collions"""
+
+		# Check for any bullets that have hit buns and if so, get rid of the bullet and the bun. 
 		collisions = pygame.sprite.groupcollide(self.bullets, self.buns, True, True)
-		
-		#increment the score if a bun is shot
-		if collisions:
-			for buns in collisions.values():
-				self.stats.score +=self.settings.bun_points * len(buns)
+
+        # Increment the score and check if it is a high score
+		for buns in collisions.values():
+			self.stats.score +=self.settings.bun_points * len(buns)
 			self.sb.prep_score()
 			self.sb.check_high_score()
 
-		# Check for any bullets that have hit buns.
-        # If so, get rid of the bullet and the bun.
+		#if no buns are left - start a new level
 		if not self.buns:
-			# Destroy existing bullets and create new fleet.
-			self.bullets.empty()
-			self._create_batch()
-			self.settings.increase_speed()
+			self.start_new_level()
 
-			#Increase level
-			self.stats.level += 1
-			self.sb.prep_level()
+	def start_new_level(self):
+		""" method to start a new level """
+		# Destroy remaining bullets, create new batch and increase speed.
+		self.bullets.empty()
+		self._create_batch()
+		self.settings.increase_speed()
+
+		#increment level counter and update scoreboard level counter
+		self.stats.level += 1
+		self.sb.prep_level()
 
 	def _ship_hit(self):
 		"""Respond to the ship being hit by a bun"""
