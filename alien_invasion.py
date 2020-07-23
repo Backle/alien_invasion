@@ -69,6 +69,11 @@ class AlienInvasion:
 		self.title_box.rect.centery = (self.screen_rect.centery - self.title_box.height - 25)
 		self.title_box.font = pygame.font.SysFont(None, 36)
 		self.title_box._prep_msg("Click to choose a difficulty level:")
+
+		#initialize sound effects
+		self.explode = pygame.mixer.Sound('sounds/explosion_medium.wav')
+		self.fire = pygame.mixer.Sound('sounds/leisure_video_game_retro_laser_gun_fire_004.wav')
+		
 		
 	def run_game(self):
 		"""Start the main loop for the game."""
@@ -173,7 +178,8 @@ class AlienInvasion:
 		""" Create a new bullet and add it to the bullets group"""
 		if len(self.bullets)< self.settings.bullets_allowed:
 			new_bullet = Bullet(self)
-			self.bullets.add(new_bullet)
+			self.bullets.add(new_bullet)			
+			self.fire.play()
 
 	def _update_bullets(self):
 		""" updated bullet position and gets rid of old bullets"""
@@ -197,6 +203,8 @@ class AlienInvasion:
 			self.stats.score +=self.settings.bun_points * len(buns)
 			self.sb.prep_score()
 			self.sb.check_high_score()
+			self.explode.play()
+
 
 		#if no buns are left - start a new level
 		if not self.buns:
