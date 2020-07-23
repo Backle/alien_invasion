@@ -81,13 +81,11 @@ class Scoreboard:
 			self.ships.add(ship)
 
 	def save_high_score(self):
+		""" saves a new high score to file on exit, so it can be reloaded next time """
 		filename = "high_score.txt"
 		with open(filename) as file_object:
 			saved_high_str = file_object.read()
 			saved_high = int(saved_high_str)
-			print (f"saved_high_str: {saved_high_str}")
-			print (f"saved_high: {saved_high}")
-			print (f"current high_score: {self.stats.high_score}")
 			if self.stats.high_score > saved_high:
 				with open(filename, 'w') as file_object:
 					file_object.write(str(self.stats.high_score))

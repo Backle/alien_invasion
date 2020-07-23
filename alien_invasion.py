@@ -151,24 +151,23 @@ class AlienInvasion:
 		if normal_button_clicked and not self.stats.game_active:
 			#reset the game settings
 			self.settings.initialize_normal_settings()
-			self._start_game()
-			self.sb.prep_score()
-			self.sb.prep_level()
-			self.sb.prep_ships()
+			self.start_sequence()
 
 		elif hard_button_clicked and not self.stats.game_active:
 			self.settings.initialize_hard_settings()
-			self._start_game()
-			self.sb.prep_score()
-			self.sb.prep_level()
-			self.sb.prep_ships()
+			self.start_sequence()
 
 		elif easy_button_clicked and not self.stats.game_active:
 			self.settings.initialize_easy_settings()
-			self._start_game()
-			self.sb.prep_score()
-			self.sb.prep_level()
-			self.sb.prep_ships()	
+			self.start_sequence()
+
+	def start_sequence(self):
+		""" calls the functions that start the game post level selections"""
+		self._start_game()
+		self.sb.prep_score()
+		self.sb.prep_level()
+		self.sb.prep_ships()
+
 	
 	def _fire_bullet(self):
 		""" Create a new bullet and add it to the bullets group"""
