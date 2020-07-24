@@ -1,6 +1,7 @@
 import sys
 from time import sleep
 import pygame
+from pygame import mixer
 
 from random import randint
 from settings import Settings
@@ -22,7 +23,7 @@ class AlienInvasion:
 		self.screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
 		self.settings.screen_width = self.screen.get_rect().width
 		self.settings.screen_height = self.screen.get_rect().height
-		pygame.display.set_caption("Alien Invasion")
+		pygame.display.set_caption("Bun Blaster")
 
 		#create and instance to store game stats and create scoreboard
 		self.stats = GameStats(self)
@@ -73,14 +74,19 @@ class AlienInvasion:
 		#initialize sound effects
 		self.explode = pygame.mixer.Sound('sounds/explosion_medium.wav')
 		self.fire = pygame.mixer.Sound('sounds/leisure_video_game_retro_laser_gun_fire_004.wav')
-		
-		
+		self.click = pygame.mixer.Sound('sounds/button_click.wav')
+		self.level_up = pygame.mixer.Sound('sounds/level_up.wav')
+		self.crash = pygame.mixer.Sound('sounds/crash.wav')
+		self.end = pygame.mixer.Sound('sounds/fail_theme.wav')
+
 	def run_game(self):
 		"""Start the main loop for the game."""
+		mixer.music.load("sounds/open_tune.wav")
+		mixer.music.play(-1)
+
 		while True:
 			# Watch for keyboard and mouse events.
 			self._check_events()
-
 			if self.stats.game_active:
 				self.ship.update()
 				self._update_bullets()
@@ -102,6 +108,7 @@ class AlienInvasion:
 
 			elif event.type == pygame.MOUSEBUTTONDOWN:
 				mouse_pos = pygame.mouse.get_pos()
+
 				self._check_play_button(mouse_pos)
 
 	def _check_keydown_events(self, event):
@@ -155,16 +162,21 @@ class AlienInvasion:
 
 		if normal_button_clicked and not self.stats.game_active:
 			#reset the game settings
+			self.click.play()
 			self.settings.initialize_normal_settings()
 			self.start_sequence()
 
 		elif hard_button_clicked and not self.stats.game_active:
+			self.click.play()
 			self.settings.initialize_hard_settings()
 			self.start_sequence()
 
 		elif easy_button_clicked and not self.stats.game_active:
+			self.click.play()
 			self.settings.initialize_easy_settings()
 			self.start_sequence()
+
+
 
 	def start_sequence(self):
 		""" calls the functions that start the game post level selections"""
@@ -172,6 +184,8 @@ class AlienInvasion:
 		self.sb.prep_score()
 		self.sb.prep_level()
 		self.sb.prep_ships()
+		mixer.music.load("sounds/attack_music.wav")
+		mixer.music.play(-1)
 
 
 	def _fire_bullet(self):
@@ -216,6 +230,7 @@ class AlienInvasion:
 		self.bullets.empty()
 		self._create_batch()
 		self.settings.increase_speed()
+		self.level_up.play()
 
 		#increment level counter and update scoreboard level counter
 		self.stats.level += 1
@@ -224,6 +239,11 @@ class AlienInvasion:
 	def _ship_hit(self):
 		"""Respond to the ship being hit by a bun"""
 
+		#stop them music - play crash
+		pygame.mixer.music.stop()
+		self.crash.play(maxtime=2000)
+		
+		
 		if self.stats.ships_left > 0:
 
 			#Decrement ships left, and update scoreboard
@@ -239,16 +259,26 @@ class AlienInvasion:
 			self.ship.center_ship()
 
 			#Pause
-			sleep(1.5)
+			sleep(2.5)
+			mixer.music.load("sounds/attack_music.wav")
+			mixer.music.play(-1)
+
 
 		else:
+			sleep(2.5)
+			pygame.mixer.Channel(0).queue(self.end)
 			self.stats.game_active = False
 			pygame.mouse.set_visible(True)
+			mixer.music.load("sounds/open_tune.wav")
+			mixer.music.play(-1)
+
+
 
 	def _create_batch(self):
 		""" Create a batch of buns"""
 		#Make a bun and find the number of buns in a row
 		#spacing between each bun is equal to one bun width
+
 		bun = Bun(self)
 		bun_width, bun_height = bun.rect.size
 		available_space_x = self.settings.screen_width - (2 * bun_width)
@@ -263,6 +293,9 @@ class AlienInvasion:
 		for row_number in range (number_rows):
 			for bun_number in range (number_buns_x):
 				self._create_bun(bun_number, row_number)
+
+
+
 
 	def _create_bun(self, bun_number, row_number):
 			#Create a bun and place it in the row
